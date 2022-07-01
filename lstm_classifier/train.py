@@ -5,7 +5,7 @@ I --> M (e --> rnn --> out) --> logits --> loss
 
 """
 
-import pickle
+import pickle, os
 from utils import prepare_dataset
 from dataloader import make_dataloader
 from models import LSTMClassifier
@@ -49,13 +49,15 @@ def test(dloader, model, criterion):
 
 
 def save_cp(model):
+    if not os.path.exists("checkpoints"):
+        os.makedirs("checkpoints")
     torch.save(model.state_dict(), "checkpoints/lstm_model.pt")
 
 
 def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dataset, word2index = prepare_dataset("./data")
-    with open("data/word2index.pkl", "wb") as f:
+    with open("./data/word2index.pkl", "wb") as f:
         pickle.dump(word2index, f)
     train_dloader = make_dataloader(dataset["train"], word2index, 20, 128, device)
     val_dloader = make_dataloader(dataset["val"], word2index, 20, 500, device)
@@ -72,6 +74,8 @@ def main():
         test(val_dloader, model, criterion)
         print("Testing...")
         test(test_dloader, model, criterion)
+
+    save_cp(model)
 
 
 if __name__ == "__main__":

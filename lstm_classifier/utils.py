@@ -36,7 +36,20 @@ def create_vocab(lines, min_freq):
     return word2index
 
 
+def check_and_download_data(data_dir):
+    DATASET_URL = "https://raw.githubusercontent.com/fuzhenxin/textstyletransferdata/master/sentiment/"
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+        print("Downloading dataset...")
+        os.chdir(data_dir)
+        os.system(f"wget {DATASET_URL, 'neg.txt'}")
+        os.system(f"wget {DATASET_URL, 'pos.txt'}")
+        os.chdir("..")
+        print(f"Downloaded pos.txt and neg.txt to {data_dir}")
+
+
 def prepare_dataset(data_dir):
+    check_and_download_data(data_dir)
     print("Preparing dataset...")
     dataset = []
     pos_path = os.path.join(data_dir, "pos.txt")
