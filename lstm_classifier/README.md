@@ -9,3 +9,5 @@ pip install torch numpy tqdm
 ```
 
 * Train the model: `python train.py`
+
+You can also watch the video tutorial here: https://www.youtube.com/watch?v=wRNPIzb9OC4
