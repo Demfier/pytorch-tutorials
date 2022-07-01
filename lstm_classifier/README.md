@@ -1,4 +1,10 @@
 # LSTM Classifier on the Amazon reviews dataset
 
-Place the pos.txt and neg.txt files in a `data` folder here.
-To train the model, run `python train.py`
+* Setup a conda environment and install dependencies
+
+```
+conda create env -n torch_dev python=3.9
+pip install torch numpy tqdm
+```
+
+* Train the model: `python train.py`
