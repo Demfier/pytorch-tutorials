@@ -4,6 +4,7 @@
 
 ```
 conda create env -n torch_dev python=3.9
+conda activate torch_dev
 pip install torch numpy tqdm
 ```
 
