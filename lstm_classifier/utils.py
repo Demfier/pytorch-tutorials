@@ -51,7 +51,7 @@ def prepare_dataset(data_dir):
     print("Processing neg.txt")
     for line in neg_lines:
         line = normalize_text(line)
-        sample = f"{line}\t1"
+        sample = f"{line}\t0"
         dataset.append(sample)
 
     np.random.shuffle(dataset)
