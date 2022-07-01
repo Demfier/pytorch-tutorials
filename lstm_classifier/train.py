@@ -15,6 +15,7 @@ import torch, numpy as np
 
 
 def train(dloader, model, criterion, optimizer):
+    model.train()
     losses, acc = [], []
     for batch in tqdm(dloader):
         y = batch["label"]
@@ -59,7 +60,6 @@ def main():
     train_dloader = make_dataloader(dataset["train"], word2index, 20, 64, device)
     val_dloader = make_dataloader(dataset["val"], word2index, 20, 64, device)
     test_dloader = make_dataloader(dataset["test"], word2index, 20, 64, device)
-    print(next(iter(val_dloader)))
     model = LSTMClassifier(len(word2index), 300, 512, 2, 2)
     model.to(device)
     criterion = torch.nn.CrossEntropyLoss()
