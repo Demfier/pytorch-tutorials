@@ -37,7 +37,7 @@ def train(dloader, model, criterion, optimizer):
 def test(dloader, model, criterion):
     model.eval()
     losses, acc = [], []
-    for batch in tqdm(dloader):
+    for batch in dloader:
         y = batch["label"]
         logits = model(batch)
         loss = criterion(logits, y)
@@ -57,9 +57,9 @@ def main():
     dataset, word2index = prepare_dataset("./data")
     with open("data/word2index.pkl", "wb") as f:
         pickle.dump(word2index, f)
-    train_dloader = make_dataloader(dataset["train"], word2index, 20, 64, device)
-    val_dloader = make_dataloader(dataset["val"], word2index, 20, 64, device)
-    test_dloader = make_dataloader(dataset["test"], word2index, 20, 64, device)
+    train_dloader = make_dataloader(dataset["train"], word2index, 20, 128, device)
+    val_dloader = make_dataloader(dataset["val"], word2index, 20, 500, device)
+    test_dloader = make_dataloader(dataset["test"], word2index, 20, 500, device)
     model = LSTMClassifier(len(word2index), 300, 512, 2, 2)
     model.to(device)
     criterion = torch.nn.CrossEntropyLoss()
