@@ -1,0 +1,1 @@
+To train bert, run: `python train.py`
