@@ -1,7 +1,5 @@
 import os, numpy as np
 
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -9,6 +7,7 @@ from transformers import (
     Trainer,
 )
 
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 from datasets import Dataset, DatasetDict
 
 
@@ -54,7 +53,7 @@ def main():
     data_dict = get_dataset("data")
     print(data_dict)
 
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased", use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased", use_fast=True)
 
     def preprocess(example):
         return tokenizer(example["text"], max_length=50, truncation=True)
@@ -62,9 +61,9 @@ def main():
     encoded_dataset = data_dict.map(preprocess, batched=True)
 
     backbone = AutoModelForSequenceClassification.from_pretrained(
-        "distilbert-base-uncased", num_labels=2
+        "bert-large-uncased", num_labels=2
     )
-
+    # https://huggingface.co/docs/transformers/v4.20.1/en/main_classes/trainer#transformers.TrainingArguments
     training_args = TrainingArguments(
         "checkpoints",
         evaluation_strategy="epoch",
@@ -75,10 +74,11 @@ def main():
         load_best_model_at_end=True,
         num_train_epochs=5,
         metric_for_best_model="accuracy",
-        per_device_train_batch_size=128,
-        per_device_eval_batch_size=128,
+        per_device_eval_batch_size=64,
+        per_device_train_batch_size=64,
     )
 
+    # https://huggingface.co/docs/transformers/v4.20.1/en/main_classes/trainer#transformers.Trainer
     trainer = Trainer(
         backbone,
         training_args,
@@ -90,7 +90,9 @@ def main():
 
     trainer.train()
 
-    print(trainer.evaluate(encoded_dataset["test"], metric_key_prefix="test"))
+    print(
+        trainer.evaluate(eval_dataset=encoded_dataset["test"], metric_key_prefix="test")
+    )
 
 
 if __name__ == "__main__":
