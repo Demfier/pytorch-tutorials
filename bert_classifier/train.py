@@ -1,13 +1,14 @@
 import os, numpy as np
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
-    Trainer,
     TrainingArguments,
+    Trainer,
 )
+
 from datasets import Dataset, DatasetDict
 
 
@@ -43,34 +44,32 @@ def get_dataset(data_dir):
 def compute_metrics(pred):
     labels = pred.label_ids
     preds = pred.predictions.argmax(-1)
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        labels, preds, average="binary"
-    )
+
+    p, r, f1, _ = precision_recall_fscore_support(labels, preds, average="binary")
     acc = accuracy_score(labels, preds)
-    return {"accuracy": acc, "f1": f1, "precision": precision, "recall": recall}
+    return {"accuracy": acc, "precision": p, "recall": r, "f1": f1}
 
 
 def main():
     data_dict = get_dataset("data")
     print(data_dict)
 
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased", use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased", use_fast=True)
 
     def preprocess(example):
         return tokenizer(example["text"], max_length=50, truncation=True)
 
     encoded_dataset = data_dict.map(preprocess, batched=True)
-    print(encoded_dataset["train"][0])
 
     backbone = AutoModelForSequenceClassification.from_pretrained(
-        "bert-base-uncased", num_labels=2
+        "distilbert-base-uncased", num_labels=2
     )
 
     training_args = TrainingArguments(
         "checkpoints",
         evaluation_strategy="epoch",
         save_strategy="epoch",
-        learning_rate=1e-3,
+        learning_rate=1e-5,
         warmup_ratio=0.1,
         weight_decay=0.01,
         load_best_model_at_end=True,
