@@ -42,8 +42,8 @@ def check_and_download_data(data_dir):
         os.makedirs(data_dir)
         print("Downloading dataset...")
         os.chdir(data_dir)
-        os.system(f"wget {DATASET_URL, 'neg.txt'}")
-        os.system(f"wget {DATASET_URL, 'pos.txt'}")
+        os.system(f"wget {os.path.join(DATASET_URL, 'neg.txt')}")
+        os.system(f"wget {os.path.join(DATASET_URL, 'pos.txt')}")
         os.chdir("..")
         print(f"Downloaded pos.txt and neg.txt to {data_dir}")
 
